@@ -1,0 +1,68 @@
+type BasicContainerSummary {
+	id: String
+	names: [String!]
+	image: String
+	command: String
+	created: Int
+	status: String
+	ports: [BasicPort!]
+	state: ContainerSummaryStateEnum
+}
+
+type BasicPort {
+	hostIp: String
+	containerPort: Int!
+	hostPort: Int
+	portType: PortTypeEnum
+}
+
+input ContainerFilterInput {
+	id: [String!]
+	name: [String!]
+	status: [ContainerSummaryStateEnum!]
+	exited: [Int!]
+	health: [ContainerHealth!]
+	network: [String!]
+	volume: [String!]
+}
+
+enum ContainerHealth {
+	STARTING
+	HEALTHY
+	UNHEALTHY
+	NONE
+}
+
+enum ContainerSummaryStateEnum {
+	EMPTY
+	CREATED
+	RUNNING
+	PAUSED
+	RESTARTING
+	EXITED
+	REMOVING
+	DEAD
+}
+
+enum PortTypeEnum {
+	EMPTY
+	TCP
+	UDP
+	SCTP
+}
+
+type Query {
+	listContainers(all: Boolean, limit: Int, size: Boolean, filter: ContainerFilterInput): [BasicContainerSummary!]!
+}
+
+"""
+Directs the executor to include this field or fragment only when the `if` argument is true.
+"""
+directive @include(if: Boolean!) on FIELD | FRAGMENT_SPREAD | INLINE_FRAGMENT
+"""
+Directs the executor to skip this field or fragment when the `if` argument is true.
+"""
+directive @skip(if: Boolean!) on FIELD | FRAGMENT_SPREAD | INLINE_FRAGMENT
+schema {
+	query: Query
+}
